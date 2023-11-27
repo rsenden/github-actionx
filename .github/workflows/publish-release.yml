@@ -3,6 +3,10 @@ on:
     branches: 
       - main   # New GitHub-favored name for default branch
       
+permissions:
+  contents: write
+  pull-requests: write
+      
 name: Publish release
 jobs:
   build-and-release:
@@ -15,7 +19,7 @@ jobs:
         id: release_please
         uses: google-github-actions/release-please-action@v3
         with:
-          release-type: node
+          release-type: simple
           package-name: ${{ github.event.repository.name }}
           
       - name: Publish v{major}.{minor} tag
@@ -33,4 +37,17 @@ jobs:
           tag_name: v${{steps.release_please.outputs.major}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          
+      - name: Update release PR
+        if: steps.release_please.outputs.pr
+        shell: bash
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@fortify.com
+          prBranch=${{ fromJSON(steps.release_please.outputs.pr).headBranchName }}
+          git fetch origin "${prBranch}"
+          git checkout "${prBranch}"
+          version=v$(cat version.txt)
+          ./update-action-refs.sh "${version}"
+          git add . && git commit -m "chore: Update action references" && git push || echo "No update needed"
           
