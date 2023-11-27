@@ -1,7 +1,9 @@
 on:
   push:
-    branches: 
-      - main   # New GitHub-favored name for default branch
+      
+permissions:
+  contents: write
+  pull-requests: write
       
 name: Publish release
 jobs:
@@ -10,12 +12,24 @@ jobs:
     steps:
       - name: Check-out source code
         uses: actions/checkout@v2
+        
+      - name: Set git author for auto-commits
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@fortify.com
+          
+      - name: Update action version references to match branch
+        run: |
+          ./update-action-refs.sh "${GITHUB_REF#refs/heads/}"
+          git add . && git commit -m "chore: Update action references" && git push || \
+            echo "No update needed" 
       
       - name: Generate and process release PR
+        if: github.ref == 'refs/heads/main'
         id: release_please
         uses: google-github-actions/release-please-action@v3
         with:
-          release-type: node
+          release-type: simple
           package-name: ${{ github.event.repository.name }}
           
       - name: Publish v{major}.{minor} tag
@@ -32,5 +46,16 @@ jobs:
         with:
           tag_name: v${{steps.release_please.outputs.major}}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Update release PR
+        if: steps.release_please.outputs.pr
+        shell: bash
+        run: |
+          prBranch=${{ fromJSON(steps.release_please.outputs.pr).headBranchName }}
+          git fetch origin "${prBranch}"
+          git checkout "${prBranch}"
+          version=v$(cat version.txt)
+          ./update-action-refs.sh "${version}"
+          git add . && git commit -m "chore: Update action references" && git push || echo "No update needed"
           
