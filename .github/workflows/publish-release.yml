@@ -1,7 +1,5 @@
 on:
   push:
-    branches: 
-      - main   # New GitHub-favored name for default branch
       
 permissions:
   contents: write
@@ -14,8 +12,22 @@ jobs:
     steps:
       - name: Check-out source code
         uses: actions/checkout@v2
+        
+      - name: Set git author for auto-commits
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@fortify.com
+        
+      - name: Update action version references to match branch
+        if: ${{!startsWith(github.ref, 'release-please')}}
+        id: perform_update
+        run: |
+          ./update-action-refs.sh "${GITHUB_REF#refs/heads/}"
+          git add . && git commit -m "chore: Update action references" && git push || \
+            echo "No update needed"
       
       - name: Generate and process release PR
+        if: github.ref == 'refs/heads/main'
         id: release_please
         uses: google-github-actions/release-please-action@v3
         with:
@@ -42,8 +54,6 @@ jobs:
         if: steps.release_please.outputs.pr
         shell: bash
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@fortify.com
           prBranch=${{ fromJSON(steps.release_please.outputs.pr).headBranchName }}
           git fetch origin "${prBranch}"
           git checkout "${prBranch}"
