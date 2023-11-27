@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/rsenden/github-actionx/compare/v1.0.0...v1.1.0) (2023-11-27)
+
+
+### Features
+
+* test2 ([bee080e](https://github.com/rsenden/github-actionx/commit/bee080e673637be888c9778d7f3303a770014cf1))
+
 ## 1.0.0 (2023-11-27)
 
 
