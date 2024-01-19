@@ -115,8 +115,12 @@ class VersionDescriptor {
     aliases: Array<string>;
     artifact: ArtifactDescriptor;
     #getArtifact(obj: any) : ArtifactDescriptor {
+        // TODO Type determination is currently fcli-specific (only supporting
+        //      x64 and defaulting to java for non-matching platforms); if we
+        //      ever want to reuse this code for other tool installations, this
+        //      will need to be updated.
         const type = `${process.platform}/x64`;
-        const artifactObj = obj[type] ? obj[type] : obj['default'];
+        const artifactObj = obj[type] ? obj[type] : obj['java'];
         if ( !artifactObj ) { throw `No suitable installation candidate found for ${type}`; }
         const result = Object.assign(new ArtifactDescriptor, artifactObj);
         result.toolName = this.toolName;
