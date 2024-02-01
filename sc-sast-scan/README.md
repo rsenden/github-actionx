@@ -49,7 +49,7 @@ Required when authenticating with SSC user credentials.
 Required: ScanCentral SAST Client Authentication Token for authenticating with ScanCentral SAST Controller.
 
 **`EXTRA_SC_SAST_LOGIN_OPTS`** - OPTIONAL    
-Extra ScanCentral SAST login options, for example for disabling SSL checks or changing connection time-outs; see [`fcli sc-sast session login` documentation](https://fortify.github.io/fcli/v2.0.0//manpage/fcli-sc-sast-session-login.html).
+Extra ScanCentral SAST login options, for example for disabling SSL checks or changing connection time-outs; see [`fcli sc-sast session login` documentation](https://fortify.github.io/fcli/v2.2.0//manpage/fcli-sc-sast-session-login.html).
 
 <!-- END-INCLUDE:env-sc-sast-login.md -->
 
@@ -75,7 +75,7 @@ As an example, if the build file that you want to use for packaging doesn't adhe
 
 
 **`EXTRA_SC_SAST_SCAN_OPTS`** - OPTIONAL    
-Extra ScanCentral SAST scan options; see [`fcli sc-sast scan start` documentation](https://fortify.github.io/fcli/v2.0.0//manpage/fcli-sc-sast-scan-start.html)
+Extra ScanCentral SAST scan options; see [`fcli sc-sast scan start` documentation](https://fortify.github.io/fcli/v2.2.0//manpage/fcli-sc-sast-scan-start.html)
 
 
 <!-- START-INCLUDE:env-wait-export.md -->

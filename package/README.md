@@ -11,7 +11,7 @@
 
 <!-- START-INCLUDE:action-package.md -->
 
-This action packages application source code using [ScanCentral Client](https://www.microfocus.com/documentation/fortify-software-security-center/2310/SC_SAST_Help_23.1.0/index.htm#A_Clients.htm). The output package is saved as `package.zip`.
+This action packages application source code using [ScanCentral Client](https://www.microfocus.com/documentation/fortify-software-security-center/2320/SC_SAST_Help_23.2.0/index.htm#A_Clients.htm). The output package is saved as `package.zip`.
 
 ### Action environment variable inputs
 

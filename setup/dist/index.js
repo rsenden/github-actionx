@@ -18935,19 +18935,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getOrDefault = exports.TOOL_DEFINITIONS_PUBLIC_KEY = exports.WORK_DIR = exports.TOOL_DEFINITIONS = exports.EXPORT_PATH = exports.TOOL_VERSIONS = exports.TOOLS = void 0;
+exports.getOrDefault = exports.TOOL_DEFINITIONS_PUBLIC_KEY = exports.TOOL_DEFINITIONS = exports.WORK_DIR = exports.EXPORT_PATH = exports.TOOL_VERSIONS = exports.TOOLS = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-// IMPORTANT: When updating "action-default" versions in the TOOLS record,
-//            please make sure to update any corresponding version numbers 
-//            in doc-resources/template-values.md accordingly to allow for 
-//            proper version-specific links in the action documentation.  
+/**
+ * The TOOLS records list the tools supported by this action, together with
+ * 'action-default' version aliases and the appropriate command names for
+ * each platform.
+ *
+ * IMPORTANT: When updating "action-default" versions in the TOOLS record,
+ *            please make sure to update any corresponding version numbers
+ *            in the documentation links in doc-resources/template-values.md
+ *            accordingly to allow for proper version-specific links in the
+ *            action documentation. For now, this only applies to fcli and
+ *            ScanCentral Client, but please double-check.
+ */
 exports.TOOLS = {
     "fcli": {
-        "versionAliases": { "action-default": "2.1.0" },
+        "versionAliases": { "action-default": "dev_develop" },
         "cmds": { "win32": "fcli.exe", "linux": "fcli", "darwin": "fcli" }
     },
     "sc-client": {
-        "versionAliases": { "action-default": "23.1.0" },
+        "versionAliases": { "action-default": "23.2.1" },
         "cmds": { "win32": "scancentral.bat", "linux": "scancentral", "darwin": "scancentral" }
     },
     "vuln-exporter": {
@@ -18959,15 +18967,24 @@ exports.TOOLS = {
         "cmds": { "win32": "FoDUploader.bat", "linux": "FoDUploader", "darwin": "FoDUploader" }
     },
     "bugtracker-utility": {
-        "versionAliases": { "action-default": "4.12" },
+        "versionAliases": { "action-default": "4.12.0" },
         "cmds": { "win32": "FortifyBugTrackerUtility.bat", "linux": "FortifyBugTrackerUtility", "darwin": "FortifyBugTrackerUtility" }
+    },
+    "debricked-cli": {
+        "versionAliases": { "action-default": "1.7.13" },
+        "cmds": { "win32": "debricked.exe", "linux": "debricked", "darwin": "debricked" }
     }
 };
+/** For every tool listed in TOOLS, the TOOL_VERSIONS Map contains the corresponding version to be installed */
 exports.TOOL_VERSIONS = Object.keys(exports.TOOLS)
     .reduce((map, toolName) => map.set(toolName, getOrDefault(core.getInput(toolName), 'skip')), new Map());
+/** The EXPORT_PATH boolean indicates whether the new tool installation should be added to the PATH */
 exports.EXPORT_PATH = core.getBooleanInput('export-path');
-exports.TOOL_DEFINITIONS = getOrDefault(core.getInput('tool-definitions'), getOrDefault(process.env['TOOL_DEFINITIONS'], 'https://raw.githubusercontent.com/fortify/tool-definitions/main/v1/tool-definitions.yaml.zip'));
+/** The WORK_DIR string defines the working directory for this action */
 exports.WORK_DIR = `${process.env['RUNNER_TEMP']}/fortify`;
+/** The TOOL_DEFINITIONS string defines the tool definitions source */
+exports.TOOL_DEFINITIONS = getOrDefault(core.getInput('tool-definitions'), getOrDefault(process.env['TOOL_DEFINITIONS'], 'https://github.com/fortify/tool-definitions/releases/download/v1/tool-definitions.yaml.zip'));
+/** The TOOL_DEFINITIONS_PUBLIC_KEY string defines the public key for checking tool definition signatures */
 exports.TOOL_DEFINITIONS_PUBLIC_KEY = `
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArij9U9yJVNc53oEMFWYp
@@ -18978,6 +18995,7 @@ FH/4Co007lmXLAe12lQQqR/pOTeHJv1sfda1xaHtj4/Tcrq04Kx0ZmGAd5D9lA92
 8pdBbzoe/mI5/Sk+nIY3AHkLXB9YAaKJf//Wb1yiP1/hchtVkfXyIaGM+cVyn7AN
 VQIDAQAB
 -----END PUBLIC KEY-----`;
+/** Utility function that returns the given value if defined and not blank, or the given default value otherwise */
 function getOrDefault(value, def) {
     return value && value.trim() != '' ? value : def;
 }
@@ -19040,11 +19058,10 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _InternalFcliHelper_instances, _a, _InternalFcliHelper_instance, _InternalFcliHelper_createInstance, _InternalFcliHelper_downloadAndExtract, _InternalFcliHelper_updateToolDefinitions, _InternalFcliHelper_getInternalFcliCmd, _b, _ToolDefinitions_downloadToolDefinitions, _VersionDescriptors_versionDescriptors, _VersionDescriptor_instances, _VersionDescriptor_getArtifact, _ArtifactDescriptor_instances, _ArtifactDescriptor_verify;
+var _InternalFcliHelper_instances, _a, _InternalFcliHelper_instance, _InternalFcliHelper_createInstance, _InternalFcliHelper_downloadAndExtract, _InternalFcliHelper_updateToolDefinitions, _InternalFcliHelper_getInternalFcliCmd, _b, _ToolDefinitions_downloadToolDefinitions, _VersionDescriptors_versionDescriptors, _VersionDescriptor_instances, _VersionDescriptor_getArtifact, _ArtifactDescriptor_instances, _ArtifactDescriptor_getDestDir, _ArtifactDescriptor_verify;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.InternalFcliHelper = void 0;
+exports.FcliRunOutput = exports.InternalFcliHelper = void 0;
 /* eslint-disable @typescript-eslint/no-explicit-any */
-//import * as core from '@actions/core';
 const exec = __importStar(__nccwpck_require__(1514));
 const tc = __importStar(__nccwpck_require__(7784));
 const node_stream_zip_1 = __importDefault(__nccwpck_require__(8119));
@@ -19052,12 +19069,26 @@ const yaml = __importStar(__nccwpck_require__(5065));
 const constants = __importStar(__nccwpck_require__(9042));
 const fs = __importStar(__nccwpck_require__(5630));
 const crypto = __importStar(__nccwpck_require__(5764));
+/**
+ * Exported class that provides functionality for install and running the
+ * internal 'action-default' fcli instance. An instance of this class can
+ * be retrieved through the instance() method, which will download and
+ * install the internal 'action-default' fcli instance if not yet installed.
+ * The public run() method can be used to run arbitrary fcli commands, the
+ * public installWithFcli() method can be used to run 'fcli tool * install'
+ * commands. Both methods will use the internal 'action-default' fcli instance.
+*/
 class InternalFcliHelper {
+    /** Private constructor; use the instance() method to retrieve the single instance of this class. */
     constructor(internalFcliDir) {
         _InternalFcliHelper_instances.add(this);
         this.internalFcliDir = internalFcliDir;
         this.internalFcliCmd = __classPrivateFieldGet(this, _InternalFcliHelper_instances, "m", _InternalFcliHelper_getInternalFcliCmd).call(this, internalFcliDir);
     }
+    /**
+     * Retrieve the single instance of this class. This will install the internal
+     * 'action-default' fcli instance if not yet installed.
+     */
     static instance() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!__classPrivateFieldGet(InternalFcliHelper, _a, "f", _InternalFcliHelper_instance)) {
@@ -19066,18 +19097,44 @@ class InternalFcliHelper {
             return __classPrivateFieldGet(InternalFcliHelper, _a, "f", _InternalFcliHelper_instance);
         });
     }
+    /**
+     * Run the internal 'action-default' fcli instance with the given arguments. If
+     * fcli returns a non-zero exit code, this function will throw an exception.
+     * Otherwise, it will return an FcliRunOutput instance, allowing callers to
+     * access stdout and stderr of the fcli invocation.
+     */
     run(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield exec.exec(this.internalFcliCmd, args);
+            const output = new FcliRunOutput();
+            const options = {
+                listeners: {
+                    stdout: (data) => {
+                        output.stdout += data.toString();
+                    },
+                    stderr: (data) => {
+                        output.stderr += data.toString();
+                    }
+                }
+            };
+            const exitCode = yield exec.exec(this.internalFcliCmd, args, options);
+            console.log(output.stdout);
+            console.warn(output.stderr);
+            if (exitCode != 0) {
+                throw `Error executing ${this.internalFcliCmd} ${args}`;
+            }
+            return output;
         });
     }
+    /**
+     * Install the given version of the given tool using the internal
+     * 'action-default' fcli instance, returning the tool installation
+     * directory.
+    */
     installWithFcli(toolName, version) {
         return __awaiter(this, void 0, void 0, function* () {
-            const destDir = `${constants.WORK_DIR}/${toolName}/${version}`;
-            if (!fs.existsSync(destDir)) {
-                yield this.run(['tool', toolName, 'install', '-v', version, '-d', destDir]);
-            }
-            return destDir;
+            const baseDir = `${constants.WORK_DIR}/tools`;
+            const result = yield this.run(['tool', toolName, 'install', '-y', '-v', version, '-b', baseDir, '--no-global-bin', '-o', 'expr={installDir}\\n']);
+            return result.stdout.split("\n")[0];
         });
     }
 }
@@ -19102,7 +19159,7 @@ _a = InternalFcliHelper, _InternalFcliHelper_instances = new WeakSet(), _Interna
     });
 }, _InternalFcliHelper_updateToolDefinitions = function _InternalFcliHelper_updateToolDefinitions(toolDefinitions) {
     return __awaiter(this, void 0, void 0, function* () {
-        //await this.run(['tool', 'config', 'update', '-f', toolDefinitions.toolDefinitionsZip]);
+        yield this.run(['tool', 'definitions', 'update', '--source', toolDefinitions.toolDefinitionsZip]);
     });
 }, _InternalFcliHelper_getInternalFcliCmd = function _InternalFcliHelper_getInternalFcliCmd(internalFcliDir) {
     const internalFcliBinDir = `${internalFcliDir}/bin`;
@@ -19120,15 +19177,35 @@ _a = InternalFcliHelper, _InternalFcliHelper_instances = new WeakSet(), _Interna
     }
 };
 _InternalFcliHelper_instance = { value: void 0 };
+/**
+ * Exported class that holds the output of an fcli invocation.
+ */
+class FcliRunOutput {
+    constructor() {
+        this.stdout = "";
+        this.stderr = "";
+    }
+}
+exports.FcliRunOutput = FcliRunOutput;
+/**
+ * This internal class is responsible for loading and processing tool definitions.
+ * Instances can be retrieved through the load() method, by providing the tool
+ * definitions source URL (note that contrary to fcli, local tool definition files are
+ * currently not supported). The getVersionDescriptors() method can be used to retrieve
+ * a VersionDescriptors instance for a given tool name.
+ */
 class ToolDefinitions {
+    /** Private constructor; use the load() method to retrieve an instance of this class. */
     constructor(toolDefinitionsZip) {
         this.toolDefinitionsZip = toolDefinitionsZip;
     }
+    /** Get the VersionDescriptors instance for the given tool name. */
     getVersionDescriptors(toolName) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield VersionDescriptors.load(this.toolDefinitionsZip, toolName);
         });
     }
+    /** Static method for loading an instance of this class using the given tool definitions source. */
     static load(src) {
         return __awaiter(this, void 0, void 0, function* () {
             return new ToolDefinitions(yield __classPrivateFieldGet(ToolDefinitions, _b, "m", _ToolDefinitions_downloadToolDefinitions).call(ToolDefinitions, src));
@@ -19144,12 +19221,20 @@ _b = ToolDefinitions, _ToolDefinitions_downloadToolDefinitions = function _ToolD
         return dest;
     });
 };
+/**
+ * This internal class holds an array of VersionDescriptor instances for a
+ * single tool. Instances of this class are usually retrieved through the
+ * ToolDefinitions::getVersionDescriptors() method. Individual VersionDescriptor
+ * instances can be retrieved using the getVersionDescriptor() method.
+ */
 class VersionDescriptors {
+    /** Private constructor; use the load() method to retrieve an instance of this class */
     constructor(toolName, versionDescriptors) {
         _VersionDescriptors_versionDescriptors.set(this, void 0);
         __classPrivateFieldSet(this, _VersionDescriptors_versionDescriptors, versionDescriptors, "f");
         this.toolName = toolName;
     }
+    /** Load the version descriptors for the given tool from the given tool definitions zip-file. */
     static load(toolDefinitionsZip, toolName) {
         return __awaiter(this, void 0, void 0, function* () {
             const zip = new node_stream_zip_1.default.async({ file: toolDefinitionsZip });
@@ -19158,22 +19243,40 @@ class VersionDescriptors {
             return new VersionDescriptors(toolName, yaml.parse(data.toString('utf8'))['versions'].map((obj) => new VersionDescriptor(toolName, obj)));
         });
     }
+    /** Get a VersionDescriptor instance for the given tool version. */
     getVersionDescriptor(version) {
         return __classPrivateFieldGet(this, _VersionDescriptors_versionDescriptors, "f").find(v => v.matches(version));
     }
 }
 _VersionDescriptors_versionDescriptors = new WeakMap();
+/**
+ * This class represents a single version for a single tool, as defined in the
+ * tool definitions bundle. Instances of this class are usually retrieved through
+ * the VersionDescriptors::getVersionDescriptor method. The downloadAndExtract()
+ * method can be used to download and extract the platform-specific tool version
+ * artifact to a predefined directory.
+*/
 class VersionDescriptor {
+    /**
+     * Constructor for creating an instance of this class for the given tool name,
+     * using the data from the given object that was loaded from a tool definitions
+     * bundle.
+     */
     constructor(toolName, obj) {
         _VersionDescriptor_instances.add(this);
         this.toolName = toolName;
         this.version = obj.version;
         this.aliases = obj.aliases;
-        this.artifact = __classPrivateFieldGet(this, _VersionDescriptor_instances, "m", _VersionDescriptor_getArtifact).call(this, obj.artifacts);
+        this.artifact = __classPrivateFieldGet(this, _VersionDescriptor_instances, "m", _VersionDescriptor_getArtifact).call(this, obj.binaries);
     }
+    /**
+     * This method returns true if the given version matches either the version or
+     * one of the aliases defined in this VersionDescriptor, false otherwise.
+     */
     matches(version) {
         return this.version == version || this.aliases.find(alias => alias == version);
     }
+    /** Download and extract the platform-specific tool version artifact to a predefined directory. */
     downloadAndExtract() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.artifact.downloadAndExtract();
@@ -19190,21 +19293,34 @@ _VersionDescriptor_instances = new WeakSet(), _VersionDescriptor_getArtifact = f
     if (!artifactObj) {
         throw `No suitable installation candidate found for ${type}`;
     }
-    const result = Object.assign(new ArtifactDescriptor, artifactObj);
+    const result = Object.assign(new ArtifactDescriptor(), artifactObj);
     result.toolName = this.toolName;
+    result.version = this.version;
     return result;
 };
+/**
+ * This class represents a single tool version (binary) artifact, as defined in the
+ * tool definitions bundle. Instances of this class are usually retrieved through
+ * the VersionDescriptor::#getArtifact method. The downloadAndExtract()
+ * method can be used to download and extract this artifact to a predefined directory.
+ */
 class ArtifactDescriptor {
     constructor() {
         _ArtifactDescriptor_instances.add(this);
         this.toolName = "";
+        this.version = "";
         this.name = "";
         this.downloadUrl = "";
         this.rsa_sha256 = "";
     }
+    /**
+     * Download, verify and copy or extract the artifact represented by this
+     * descriptor to a predefined directory as returned by the #getDestDir()
+     * method. This method returns the directory where the tool was extracted.
+     */
     downloadAndExtract() {
         return __awaiter(this, void 0, void 0, function* () {
-            const destDir = this.getDestDir();
+            const destDir = __classPrivateFieldGet(this, _ArtifactDescriptor_instances, "m", _ArtifactDescriptor_getDestDir).call(this);
             if (!fs.existsSync(destDir) || fs.readdirSync(destDir).length === 0) {
                 const binDir = `${destDir}/bin`;
                 const file = yield tc.downloadTool(this.downloadUrl);
@@ -19227,11 +19343,10 @@ class ArtifactDescriptor {
             return destDir;
         });
     }
-    getDestDir() {
-        return `${constants.WORK_DIR}/${this.toolName}/${Buffer.from(this.downloadUrl).toString('base64')}`;
-    }
 }
-_ArtifactDescriptor_instances = new WeakSet(), _ArtifactDescriptor_verify = function _ArtifactDescriptor_verify(file) {
+_ArtifactDescriptor_instances = new WeakSet(), _ArtifactDescriptor_getDestDir = function _ArtifactDescriptor_getDestDir() {
+    return `${constants.WORK_DIR}/tools/${this.toolName}/${Buffer.from(this.downloadUrl).toString('base64')}`;
+}, _ArtifactDescriptor_verify = function _ArtifactDescriptor_verify(file) {
     var e_1, _c;
     return __awaiter(this, void 0, void 0, function* () {
         const verifier = crypto.createVerify('RSA-SHA256');
@@ -19299,11 +19414,25 @@ exports.install = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const fcli = __importStar(__nccwpck_require__(6386));
 const constants = __importStar(__nccwpck_require__(9042));
-//import * as tc from '@actions/tool-cache';
-//import * as exec from '@actions/exec';
-//import * as fs from 'node:fs';
-//import * as crypto from 'node:crypto';
-//import * as tool from './tool';
+/**
+ * Exported function for installing the given version of the given tool.
+ *
+ * If version=='skip', tool installation will be skipped.
+ * If version=='action-default', the 'action-default' version as defined
+ * in the TOOLS constant will be installed.
+ * Otherwise, the given tool version will be installed.
+ *
+ * If the 'action-default' version of fcli is to be installed, the internal fcli
+ * installer will be used. For all other tools and other fcli versions, the
+ * internal 'action-default' fcli installation will be used to perform the installation.
+ *
+ * If the 'export-path' input is set to 'true', the tool bin-directory will be
+ * added to the workflow PATH environment variable for easy tool invocation. In
+ * addition, the following environment variables will always be set:
+ * - <TOOL_NAME>_INSTALL_DIR: Tool installation directory
+ * - <TOOL_NAME>_BIN_DIR: Tool bin-directory
+ * - <TOOL_NAME>_CMD: Platform-specific command for running the primary tool executable
+*/
 function install(toolName, version) {
     return __awaiter(this, void 0, void 0, function* () {
         switch (version) {
@@ -19318,6 +19447,13 @@ function install(toolName, version) {
     });
 }
 exports.install = install;
+/**
+ * Install the 'action-default' version of the given tool name as defined in
+ * the TOOLS constant. If toolName=='fcli', the installActionDefaultFcli()
+ * function will be invoked to install fcli using the internal fcli installer,
+ * otherwise the installVersion() function will be invoked to use the internal
+ * 'action-default' fcli instance for performing the installation.
+*/
 function installActionDefault(toolName) {
     return __awaiter(this, void 0, void 0, function* () {
         switch (toolName) {
@@ -19330,6 +19466,13 @@ function installActionDefault(toolName) {
         }
     });
 }
+/**
+ * Install the 'action-default' fcli version using the internal fcli
+ * installer. This simply gets the singleton instance of the
+ * InternalFcliHelper (which will install the internal fcli instance
+ * if not yet installed), and then exports the appropriate environment
+ * variables.
+ */
 function installActionDefaultFcli() {
     return __awaiter(this, void 0, void 0, function* () {
         const fcliHelper = yield fcli.InternalFcliHelper.instance();
@@ -19337,17 +19480,27 @@ function installActionDefaultFcli() {
         exportToolCmdVariable('fcli', fcliHelper.internalFcliCmd);
     });
 }
+/**
+ * Install the given version of the given tool using the internal
+ * 'action-default' fcli instance, then export the appropriate
+ * environment variables.
+*/
 function installVersion(toolName, version) {
     return __awaiter(this, void 0, void 0, function* () {
         const fcliHelper = yield fcli.InternalFcliHelper.instance();
         const installPath = yield fcliHelper.installWithFcli(toolName, version);
         exportToolPathVariables(toolName, installPath);
         const cmd = constants.TOOLS[toolName]["cmds"][process.platform];
-        if (cmd) {
-            exportToolCmdVariable(toolName, core.toPlatformPath(`${installPath}/bin/${cmd}`));
-        }
+        exportToolCmdVariable(toolName, core.toPlatformPath(`${installPath}/bin/${cmd}`));
     });
 }
+/**
+ * Export tool path variables. If the 'export-path' input is set to 'true', the
+ * <installPath>/bin directory will be added to the workflow PATH environment
+ * variable. In addition, the following environment variables will be set:
+ * - <TOOL_NAME>_INSTALL_DIR: Tool installation directory
+ * - <TOOL_NAME>_BIN_DIR: Tool bin-directory
+ */
 function exportToolPathVariables(toolName, installPath) {
     if (constants.EXPORT_PATH) {
         core.addPath(`${installPath}/bin`);
@@ -19356,9 +19509,20 @@ function exportToolPathVariables(toolName, installPath) {
     core.exportVariable(varBaseName + '_INSTALL_DIR', core.toPlatformPath(installPath));
     core.exportVariable(varBaseName + '_BIN_DIR', core.toPlatformPath(`${installPath}/bin`));
 }
+/**
+ * Export the <TOOL_NAME>_CMD environment variable, containing the platform-specific
+ * command for running the primary tool executable. If no platform-specific command
+ * is available, this environment variable will not be exported.
+*/
 function exportToolCmdVariable(toolName, cmd) {
-    core.exportVariable(`${getEnvVarBaseName(toolName)}_CMD`, cmd);
+    if (cmd) {
+        core.exportVariable(`${getEnvVarBaseName(toolName)}_CMD`, cmd);
+    }
 }
+/**
+ * Get the environment variable base name for the given tool name. This simply
+ * converts the given tool name to upper case and replaces all dashes by underscores.
+*/
 function getEnvVarBaseName(toolName) {
     return toolName.toUpperCase().replace('-', '_');
 }
@@ -19404,15 +19568,15 @@ const core = __importStar(__nccwpck_require__(2186));
 const installer = __importStar(__nccwpck_require__(2574));
 const constants = __importStar(__nccwpck_require__(9042));
 /**
- * Main entrypoint for this GitHub Action. This function installs a fixed fcli
- * version for internal use, then iterates over the available tools to install
- * them if applicable.
+ * Main entrypoint for this GitHub Action. This function simply invokes the
+ * installer.install() function for every tool name & version defined in the
+ * TOOL_VERSIONS constant.
  */
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            for (const toolName of Object.keys(constants.TOOLS)) {
-                yield installer.install(toolName, constants.getOrDefault(core.getInput(toolName), 'skip'));
+            for (const [toolName, toolVersion] of constants.TOOL_VERSIONS.entries()) {
+                yield installer.install(toolName, toolVersion);
             }
         }
         catch (err) {
