@@ -65,7 +65,7 @@ async function installVersion(toolName: string, version: string) {
     const fcliHelper = await fcli.InternalFcliHelper.instance();
     const installPath = await fcliHelper.installWithFcli(toolName, version);
     exportToolPathVariables(toolName, installPath);
-    const cmd = constants.TOOLS[toolName]["cmds"][process.platform];
+    const cmd = constants.TOOLS[toolName]["cmds"][constants.NORMALIZED_PLATFORM];
     exportToolCmdVariable(toolName, core.toPlatformPath(`${installPath}/bin/${cmd}`));
 }
 

@@ -228,7 +228,7 @@ class VersionDescriptor {
         //      x64 and defaulting to java for non-matching platforms); if we
         //      ever want to reuse this code for other tool installations, this
         //      will need to be updated.
-        const type = `${process.platform}/x64`;
+        const type = `${constants.NORMALIZED_PLATFORM}/x64`;
         const artifactObj = obj[type] ? obj[type] : obj['java'];
         if ( !artifactObj ) { throw `No suitable installation candidate found for ${type}`; }
         const result = Object.assign(new ArtifactDescriptor(), artifactObj);

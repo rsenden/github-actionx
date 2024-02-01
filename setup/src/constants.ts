@@ -51,6 +51,9 @@ export const WORK_DIR = `${process.env['RUNNER_TEMP']}/fortify`
 /** The TOOL_DEFINITIONS string defines the tool definitions source */
 export const TOOL_DEFINITIONS = getOrDefault(core.getInput('tool-definitions'), 
     getOrDefault(process.env['TOOL_DEFINITIONS'], 'https://github.com/fortify/tool-definitions/releases/download/v1/tool-definitions.yaml.zip'));
+    
+/** The NORMALIZED_PLATFORM string defines the normalized platform for lookup in tool definitions */
+export const NORMALIZED_PLATFORM = getNormalizedPlatform()
 
 /** The TOOL_DEFINITIONS_PUBLIC_KEY string defines the public key for checking tool definition signatures */
 export const TOOL_DEFINITIONS_PUBLIC_KEY = `
@@ -65,6 +68,21 @@ VQIDAQAB
 -----END PUBLIC KEY-----`;
 
 /** Utility function that returns the given value if defined and not blank, or the given default value otherwise */
-export function getOrDefault(value: string|undefined, def: string) {
+function getOrDefault(value: string|undefined, def: string) {
     return value && value.trim()!=''  ? value : def;
+}
+
+/** Utility function to get normalized platform */
+function getNormalizedPlatform() {
+    const platform = process.platform;
+    if (platform.toLowerCase().indexOf("linux")>0 ) {
+        return "linux";
+    }
+    if (platform.toLowerCase().indexOf("mac")>0 || platform.toLowerCase().indexOf("darwin")>0 ) {
+        return "darwin";
+    }
+    if (platform.toLowerCase().indexOf("win")>0 ) {
+        return "windows";
+    }
+    return platform;
 }

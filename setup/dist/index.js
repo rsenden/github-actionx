@@ -18935,7 +18935,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getOrDefault = exports.TOOL_DEFINITIONS_PUBLIC_KEY = exports.TOOL_DEFINITIONS = exports.WORK_DIR = exports.EXPORT_PATH = exports.TOOL_VERSIONS = exports.TOOLS = void 0;
+exports.TOOL_DEFINITIONS_PUBLIC_KEY = exports.NORMALIZED_PLATFORM = exports.TOOL_DEFINITIONS = exports.WORK_DIR = exports.EXPORT_PATH = exports.TOOL_VERSIONS = exports.TOOLS = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 /**
  * The TOOLS records list the tools supported by this action, together with
@@ -18984,6 +18984,8 @@ exports.EXPORT_PATH = core.getBooleanInput('export-path');
 exports.WORK_DIR = `${process.env['RUNNER_TEMP']}/fortify`;
 /** The TOOL_DEFINITIONS string defines the tool definitions source */
 exports.TOOL_DEFINITIONS = getOrDefault(core.getInput('tool-definitions'), getOrDefault(process.env['TOOL_DEFINITIONS'], 'https://github.com/fortify/tool-definitions/releases/download/v1/tool-definitions.yaml.zip'));
+/** The NORMALIZED_PLATFORM string defines the normalized platform for lookup in tool definitions */
+exports.NORMALIZED_PLATFORM = getNormalizedPlatform();
 /** The TOOL_DEFINITIONS_PUBLIC_KEY string defines the public key for checking tool definition signatures */
 exports.TOOL_DEFINITIONS_PUBLIC_KEY = `
 -----BEGIN PUBLIC KEY-----
@@ -18999,7 +19001,20 @@ VQIDAQAB
 function getOrDefault(value, def) {
     return value && value.trim() != '' ? value : def;
 }
-exports.getOrDefault = getOrDefault;
+/** Utility function to get normalized platform */
+function getNormalizedPlatform() {
+    const platform = process.platform;
+    if (platform.toLowerCase().indexOf("linux") > 0) {
+        return "linux";
+    }
+    if (platform.toLowerCase().indexOf("mac") > 0 || platform.toLowerCase().indexOf("darwin") > 0) {
+        return "darwin";
+    }
+    if (platform.toLowerCase().indexOf("win") > 0) {
+        return "windows";
+    }
+    return platform;
+}
 
 
 /***/ }),
@@ -19288,7 +19303,7 @@ _VersionDescriptor_instances = new WeakSet(), _VersionDescriptor_getArtifact = f
     //      x64 and defaulting to java for non-matching platforms); if we
     //      ever want to reuse this code for other tool installations, this
     //      will need to be updated.
-    const type = `${process.platform}/x64`;
+    const type = `${constants.NORMALIZED_PLATFORM}/x64`;
     const artifactObj = obj[type] ? obj[type] : obj['java'];
     if (!artifactObj) {
         throw `No suitable installation candidate found for ${type}`;
@@ -19490,7 +19505,7 @@ function installVersion(toolName, version) {
         const fcliHelper = yield fcli.InternalFcliHelper.instance();
         const installPath = yield fcliHelper.installWithFcli(toolName, version);
         exportToolPathVariables(toolName, installPath);
-        const cmd = constants.TOOLS[toolName]["cmds"][process.platform];
+        const cmd = constants.TOOLS[toolName]["cmds"][constants.NORMALIZED_PLATFORM];
         exportToolCmdVariable(toolName, core.toPlatformPath(`${installPath}/bin/${cmd}`));
     });
 }
