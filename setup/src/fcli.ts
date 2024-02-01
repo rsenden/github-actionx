@@ -72,7 +72,7 @@ export class InternalFcliHelper {
     */
     async installWithFcli(toolName: string, version:string) : Promise<string> {
         const baseDir = `${constants.WORK_DIR}/tools`;
-        const result = await this.run(['tool', toolName, 'install', '-y', '-v', version, '-b', baseDir, '--no-global-bin', '-o', 'expr={installDir}\\n']);
+        const result = await this.run(['tool', toolName, 'install', '-y', '-v', version, '-b', baseDir, '--no-global-bin', '--no-progress', '-o', 'expr={installDir}\\n']);
         return result.stdout.split("\n")[0];
     }
     

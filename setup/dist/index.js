@@ -19133,7 +19133,7 @@ class InternalFcliHelper {
     installWithFcli(toolName, version) {
         return __awaiter(this, void 0, void 0, function* () {
             const baseDir = `${constants.WORK_DIR}/tools`;
-            const result = yield this.run(['tool', toolName, 'install', '-y', '-v', version, '-b', baseDir, '--no-global-bin', '-o', 'expr={installDir}\\n']);
+            const result = yield this.run(['tool', toolName, 'install', '-y', '-v', version, '-b', baseDir, '--no-global-bin', '--no-progress', '-o', 'expr={installDir}\\n']);
             return result.stdout.split("\n")[0];
         });
     }
