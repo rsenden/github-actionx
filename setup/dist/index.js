@@ -19004,13 +19004,13 @@ function getOrDefault(value, def) {
 /** Utility function to get normalized platform */
 function getNormalizedPlatform() {
     const platform = process.platform;
-    if (platform.toLowerCase().indexOf("linux") > 0) {
+    if (platform.toLowerCase().startsWith("linux")) {
         return "linux";
     }
-    if (platform.toLowerCase().indexOf("mac") > 0 || platform.toLowerCase().indexOf("darwin") > 0) {
+    if (platform.toLowerCase().startsWith("mac") || platform.toLowerCase().startsWith("darwin")) {
         return "darwin";
     }
-    if (platform.toLowerCase().indexOf("win") > 0) {
+    if (platform.toLowerCase().startsWith("win")) {
         return "windows";
     }
     return platform;
