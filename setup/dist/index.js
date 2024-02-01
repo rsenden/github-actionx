@@ -18952,27 +18952,27 @@ const core = __importStar(__nccwpck_require__(2186));
 exports.TOOLS = {
     "fcli": {
         "versionAliases": { "action-default": "dev_develop" },
-        "cmds": { "win32": "fcli.exe", "linux": "fcli", "darwin": "fcli" }
+        "cmds": { "windows": "fcli.exe", "linux": "fcli", "darwin": "fcli" }
     },
     "sc-client": {
         "versionAliases": { "action-default": "23.2.1" },
-        "cmds": { "win32": "scancentral.bat", "linux": "scancentral", "darwin": "scancentral" }
+        "cmds": { "windows": "scancentral.bat", "linux": "scancentral", "darwin": "scancentral" }
     },
     "vuln-exporter": {
         "versionAliases": { "action-default": "2.0.4" },
-        "cmds": { "win32": "FortifyVulnerabilityExporter.bat", "linux": "FortifyVulnerabilityExporter", "darwin": "FortifyVulnerabilityExporter" }
+        "cmds": { "windows": "FortifyVulnerabilityExporter.bat", "linux": "FortifyVulnerabilityExporter", "darwin": "FortifyVulnerabilityExporter" }
     },
     "fod-uploader": {
         "versionAliases": { "action-default": "5.4.0" },
-        "cmds": { "win32": "FoDUploader.bat", "linux": "FoDUploader", "darwin": "FoDUploader" }
+        "cmds": { "windows": "FoDUploader.bat", "linux": "FoDUploader", "darwin": "FoDUploader" }
     },
     "bugtracker-utility": {
         "versionAliases": { "action-default": "4.12.0" },
-        "cmds": { "win32": "FortifyBugTrackerUtility.bat", "linux": "FortifyBugTrackerUtility", "darwin": "FortifyBugTrackerUtility" }
+        "cmds": { "windows": "FortifyBugTrackerUtility.bat", "linux": "FortifyBugTrackerUtility", "darwin": "FortifyBugTrackerUtility" }
     },
     "debricked-cli": {
         "versionAliases": { "action-default": "1.7.13" },
-        "cmds": { "win32": "debricked.exe", "linux": "debricked", "darwin": "debricked" }
+        "cmds": { "windows": "debricked.exe", "linux": "debricked", "darwin": "debricked" }
     }
 };
 /** For every tool listed in TOOLS, the TOOL_VERSIONS Map contains the corresponding version to be installed */
