@@ -57,8 +57,6 @@ export class InternalFcliHelper {
             }
         };
         const exitCode = await exec.exec(this.internalFcliCmd, args, options);
-        console.log(output.stdout);
-        console.warn(output.stderr);
         if ( exitCode!=0 ) {
             throw `Error executing ${this.internalFcliCmd} ${args}`
         }
